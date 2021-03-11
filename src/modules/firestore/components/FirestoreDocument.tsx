@@ -1,49 +1,51 @@
-import * as React from "react";
+import React, {useEffect} from "react";
 import { renderAndAddProps } from "render-and-add-props";
 
-import { FirestoreContextConsumer } from "../Context";
-import { FirestoreQuery } from "../types";
-import { FirestoreDocumentContextConsumerLifeCycle } from "./FirestoreDocumentContextConsumerWithLifecycle";
+import { FirestoreContextConsumer, useFirebaseContext } from "../Context";
+import { FirestoreQuery, FirestoreContextConsumerWithLifeCycleProps } from "../types";
 
-export class FirestoreDocument extends React.Component<
+export const FirestoreDocument:React.FC<
   FirestoreQuery & {
     children: (
-      {
-
-      }: {
+      {}: {
         path: string;
         value: any;
         isLoading: boolean;
       }
     ) => React.ReactNode;
   }
-> {
-  render() {
-    const { children, path } = this.props;
-    if (path === null) {
-      console.warn("path not provided to FirestoreNode ! Not rendering.");
-      return null;
-    }
-    return (
-      <FirestoreContextConsumer>
-        {context => {
-          return (
-            <React.Fragment>
-              <FirestoreDocumentContextConsumerLifeCycle
-                {...context}
-                path={path}
-                {...this.props}
-              />
-              {renderAndAddProps(children, {
-                path,
-                value: context.dataTree[path] && context.dataTree[path].value,
-                isLoading:
-                  context.dataTree[path] && context.dataTree[path].isLoading
-              })}
-            </React.Fragment>
-          );
-        }}
-      </FirestoreContextConsumer>
-    );
+> = ({children, ...query}) => {
+  const {dataTree, listenTo, stopListeningTo} = useFirebaseContext()
+  const {path} = query; 
+
+  function listenToNodeIfNotInContext() {
+      if (path === null || path in dataTree) return;
+      listenTo(query, "document");
   }
+  function stopListeningToNode() {
+      if (path === null || path in dataTree) return;
+      stopListeningTo(path);
+  }
+
+  useEffect(() => {
+    listenToNodeIfNotInContext();
+    return () => {
+        stopListeningToNode();
+    }
+  }, [path])
+
+  if (path === null) {
+    console.warn("path not provided to FirestoreNode ! Not rendering.");
+    return null;
+  }
+
+  return (
+    renderAndAddProps(children, {
+      path,
+      value: dataTree[path] && dataTree[path].value,
+      isLoading:
+        dataTree[path] && dataTree[path].isLoading
+    })
+  );
+  
 }

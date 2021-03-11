@@ -6,6 +6,7 @@ import {FirestoreCollection, FirestoreMutation, FirestoreProvider} from './modul
 
 import firebase from 'firebase'
 import { RunMutation } from '@react-firebase/firestore/dist/components/FirestoreMutation';
+import { FirestoreDocument } from './modules/firestore/components/FirestoreDocument';
 
 const config = {
   apiKey: "AIzaSyB34W9Lik9NP5Vmcm2Ayt8M-wkRya1WBhI",
@@ -16,7 +17,6 @@ const config = {
   messagingSenderId: "1020655036061",
   appId: "1:1020655036061:web:d316bc5c8ab54c14151674"
 }
-
 
 function App() {
   const [state, setState] = React.useState(0)
@@ -30,13 +30,17 @@ function App() {
         <button onClick={()=>setState(state+1)}>{state}</button>
         <p>
           Edit <code>src/App.tsx</code> and save to reload. <br/>
-          <FirestoreCollection path="/test/" orderBy={[{field: "t", type: "asc"}]}>
+          {/* <FirestoreCollection path="/test/" orderBy={[{field: "t", type: "asc"}]}>
             {d => {
               return d.isLoading ? "Loading" : 
              (d.value.map && d.value.map( ({t, value}:{t: {seconds: number, milliseconds: number}, value: any}) => <span>{value} - </span>))
-             /*  <pre style={{width: '10rem'}}>{JSON.stringify(d.value, null, 4)}</pre> */
             }}
-          </FirestoreCollection>
+          </FirestoreCollection> */}
+          <FirestoreDocument path="/books/BtL4thhSYtLye4nu08MI">
+            {(data) => (
+              <span>{data.value.title} - {state}</span>
+            )}
+          </FirestoreDocument>
         </p>
         <FirestoreMutation path="/test" type="add" dependencies={[state]}>
           {({runMutation}) => (
@@ -53,7 +57,7 @@ function App() {
         </FirestoreMutation>
         
       </header>
-          </FirestoreProvider>
+      </FirestoreProvider>
     </div>
   );
 }

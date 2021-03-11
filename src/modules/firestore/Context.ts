@@ -9,7 +9,10 @@ export const firestoreDefaultContext = {
   firestore: null as any
 } as FirestoreProviderState;
 
+export const FirestoreContext = React.createContext(firestoreDefaultContext);
 export const {
   Provider: FirestoreContextProvider,
   Consumer: FirestoreContextConsumer
-} = React.createContext(firestoreDefaultContext);
+} = FirestoreContext;
+
+export const useFirebaseContext = () => React.useContext(FirestoreContext);
