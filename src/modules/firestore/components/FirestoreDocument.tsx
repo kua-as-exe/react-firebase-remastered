@@ -1,8 +1,8 @@
 import React, {useEffect} from "react";
 import { renderAndAddProps } from "render-and-add-props";
 
-import { FirestoreContextConsumer, useFirebaseContext } from "../Context";
-import { FirestoreQuery, FirestoreContextConsumerWithLifeCycleProps } from "../types";
+import { useFirestoreContext } from "../Context";
+import { FirestoreQuery } from "../types";
 
 export const FirestoreDocument:React.FC<
   FirestoreQuery & {
@@ -15,7 +15,7 @@ export const FirestoreDocument:React.FC<
     ) => React.ReactNode;
   }
 > = ({children, ...query}) => {
-  const {dataTree, listenTo, stopListeningTo} = useFirebaseContext()
+  const {dataTree, listenTo, stopListeningTo} = useFirestoreContext()
   const {path} = query; 
 
   function listenToNodeIfNotInContext() {
@@ -43,8 +43,7 @@ export const FirestoreDocument:React.FC<
     renderAndAddProps(children, {
       path,
       value: dataTree[path] && dataTree[path].value,
-      isLoading:
-        dataTree[path] && dataTree[path].isLoading
+      isLoading: dataTree[path] && dataTree[path].isLoading
     })
   );
   

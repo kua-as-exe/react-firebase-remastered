@@ -2,11 +2,9 @@ import React from 'react';
 import logo from './logo.svg';
 import './App.css';
 //import {FirestoreCollection, FirestoreMutation, FirestoreProvider} from '@react-firebase/firestore';
-import {FirestoreCollection, FirestoreMutation, FirestoreProvider} from './modules/firestore';
+import {FirestoreCollection, FirestoreMutation, FirestoreProvider, FirestoreDocument} from './modules/firestore';
 
 import firebase from 'firebase'
-import { RunMutation } from '@react-firebase/firestore/dist/components/FirestoreMutation';
-import { FirestoreDocument } from './modules/firestore/components/FirestoreDocument';
 
 const config = {
   apiKey: "AIzaSyB34W9Lik9NP5Vmcm2Ayt8M-wkRya1WBhI",
@@ -20,6 +18,7 @@ const config = {
 
 function App() {
   const [state, setState] = React.useState(0)
+  const [path, setPath] = React.useState('/books/')
 
   return (
     <div className="App">
@@ -28,17 +27,22 @@ function App() {
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <button onClick={()=>setState(state+1)}>{state}</button>
-        <p>
+        <div>
           Edit <code>src/App.tsx</code> and save to reload. <br/>
-          {/* <FirestoreCollection path="/test/" orderBy={[{field: "t", type: "asc"}]}>
+          <button onClick={() => setPath(path === '/test/'? '/books/': '/test/')}>Cambiar - {path}</button>
+          <FirestoreCollection path={path} orderBy={[{field: "value", type: "asc"}]}>
             {d => {
               return d.isLoading ? "Loading" : 
-             (d.value.map && d.value.map( ({t, value}:{t: {seconds: number, milliseconds: number}, value: any}) => <span>{value} - </span>))
+              <pre style={{width: '10rem'}}> {path} - {state} - {JSON.stringify(d.value, null, 4)}</pre>
+              /* { <>{d.value && d.value.map(({value}) => <div>{value || 'x'} - {state}</div>)}</> } */
+              /* (d.value.map && d.value.map( ({t, value}:{t: {seconds: number, milliseconds: number}, value: any}) => <span>{value} - </span>)) */
             }}
-          </FirestoreCollection> */}
+          </FirestoreCollection>
+        </div>
+        <p>
           <FirestoreDocument path="/books/BtL4thhSYtLye4nu08MI">
             {(data) => (
-              <span>{data.value.title} - {state}</span>
+              <span>{data.value?.title} - {state}</span>
             )}
           </FirestoreDocument>
         </p>

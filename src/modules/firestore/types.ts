@@ -30,6 +30,7 @@ export type FirestoreProviderState = {
       isLoading: boolean;
       value: FirestoreNodeValue[];
       unsub: () => void;
+      ids?: string[];
     };
   };
   listenTo: (

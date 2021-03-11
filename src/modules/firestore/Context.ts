@@ -15,4 +15,4 @@ export const {
   Consumer: FirestoreContextConsumer
 } = FirestoreContext;
 
-export const useFirebaseContext = () => React.useContext(FirestoreContext);
+export const useFirestoreContext = () => React.useContext(FirestoreContext);

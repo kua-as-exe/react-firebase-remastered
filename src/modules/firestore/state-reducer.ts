@@ -79,7 +79,8 @@ export const actions = {
     { path }: { path: string }
   ) => {
     return produce(state as any, newState => {
-      set(newState, `dataTree.${path}`, undefined);
+      delete newState.dataTree[path];
+      /* set(newState, `dataTree.${path}`, undefined); */
       return newState;
     });
   }
